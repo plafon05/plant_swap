@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: plantswap_postgres
+    environment:
+      POSTGRES_USER: dzheltov
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: plant_swap
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

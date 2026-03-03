@@ -1,0 +1,16 @@
+# Binaries
+bin/
+*.exe
+
+# Secrets — NEVER commit these
+.env
+*.env
+configs/prod.yaml
+
+# Go
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp

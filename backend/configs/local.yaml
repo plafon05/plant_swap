@@ -1,0 +1,16 @@
+env: local
+server:
+  port: "8081"
+  read_timeout: 5s
+  write_timeout: 10s
+  allowed_origins:
+    - "http://localhost:5173"
+db:
+  host: "localhost"
+  port: "5433"
+  user: "dzheltov"
+  password: ${DB_PASSWORD}
+  name: "plant_swap"
+  ssl_mode: "disable"
+jwt:
+  expires_dur: 72h
