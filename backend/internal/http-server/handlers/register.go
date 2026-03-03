@@ -55,6 +55,11 @@ func Register(r *gin.Engine, db storage.Storage, cfg *config.Config) {
 	p.GET("reports/active-users", h.GetActiveUsers)
 	p.GET("reports/popular-plants", h.GetPopularPlants)
 	p.GET("reports/stats", h.GetStats)
+
+	// в функции Register(), до protected группы
+	api.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
 }
 
 // handler holds shared dependencies for all handlers.
