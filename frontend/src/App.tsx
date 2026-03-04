@@ -9,6 +9,7 @@ import MyPlantsPage from './pages/MyPlantsPage'
 import OffersPage from './pages/OffersPage'
 import HistoryPage from './pages/HistoryPage'
 import ReportsPage from './pages/ReportsPage'
+import ProfilePage from './pages/ProfilePage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore(s => s.token)
@@ -35,6 +36,11 @@ export default function App() {
     <ToastProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/profile" element={
+            <PrivateRoute>
+              <Layout><ProfilePage /></Layout>
+            </PrivateRoute>
+          } />
           <Route path="/login" element={<AuthPage />} />
           <Route path="/" element={
             <PrivateRoute>

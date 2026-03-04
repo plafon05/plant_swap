@@ -189,13 +189,31 @@ func (h *handler) AcceptTrade(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"error": "offer is not pending"})
 		return
 	}
-
-	h.db.UpdateOffer(uint(id), map[string]any{"status": models.OfferStatusCompleted})
-	h.db.IncrementTradeCount(offer.OfferedPlantID)
-	if offer.RequestedPlantID != nil {
-		h.db.IncrementTradeCount(*offer.RequestedPlantID)
+	if offer.RequesterID == nil || offer.RequestedPlantID == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid offer state"})
+		return
 	}
 
+	// ── 1. Завершить оффер ────────────────────────────────────
+	h.db.UpdateOffer(uint(id), map[string]any{"status": models.OfferStatusCompleted})
+
+	// ── 2. Передать растения новым владельцам ─────────────────
+	// Растение владельца → requestер
+	h.db.UpdatePlant(offer.OfferedPlantID, map[string]any{
+		"user_id":      *offer.RequesterID,
+		"is_available": true,
+	})
+	// Растение requestера → владелец
+	h.db.UpdatePlant(*offer.RequestedPlantID, map[string]any{
+		"user_id":      offer.OwnerID,
+		"is_available": true,
+	})
+
+	// ── 3. Увеличить счётчики ─────────────────────────────────
+	h.db.IncrementTradeCount(offer.OfferedPlantID)
+	h.db.IncrementTradeCount(*offer.RequestedPlantID)
+
+	// ── 4. Записать историю ───────────────────────────────────
 	history := &models.TradeHistory{
 		TradeOfferID:    offer.ID,
 		InitiatorID:     *offer.RequesterID,
