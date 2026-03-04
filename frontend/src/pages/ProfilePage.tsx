@@ -3,6 +3,7 @@ import { useAuthStore } from '../store/auth'
 import { authApi } from '../api/client'
 import { useToast } from '../context/ToastContext'
 import { REGIONS, initials } from '../utils/plant'
+import ImageUpload from '../components/ImageUpload'
 
 export default function ProfilePage() {
   const { user, fetchProfile } = useAuthStore()
@@ -207,24 +208,13 @@ export default function ProfilePage() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Ссылка на аватар (URL)</label>
-            <input
-              className="form-input"
+            <label className="form-label">Фото профиля</label>
+            <ImageUpload
               value={info.avatar}
-              onChange={setI('avatar')}
-              placeholder="https://example.com/photo.jpg"
+              onChange={url => setInfo(f => ({ ...f, avatar: url }))}
+              shape="circle"
+              placeholder="👤"
             />
-            {info.avatar && (
-              <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
-                <img
-                  src={info.avatar}
-                  alt="preview"
-                  style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border)' }}
-                  onError={e => (e.currentTarget.style.display = 'none')}
-                />
-                <span style={{ fontSize: 13, color: 'var(--mist)' }}>Предпросмотр</span>
-              </div>
-            )}
           </div>
 
           <button

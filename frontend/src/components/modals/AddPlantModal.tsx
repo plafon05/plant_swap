@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { CreatePlantInput, PlantType } from '../../types'
 import { PLANT_TYPES, TYPE_ICONS, REGIONS } from '../../utils/plant'
+import ImageUpload from '../ImageUpload'
 
 interface Props {
   onClose: () => void
@@ -82,8 +83,12 @@ export default function AddPlantModal({ onClose, onSubmit }: Props) {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Ссылка на фото (URL)</label>
-          <input className="form-input" value={form.image_url} onChange={set('image_url')} placeholder="https://..." />
+          <label className="form-label">Фото растения</label>
+          <ImageUpload
+            value={form.image_url ?? ''}
+            onChange={url => setForm(f => ({ ...f, image_url: url }))}
+            placeholder="🌿"
+          />
         </div>
 
         <div className="modal-actions">

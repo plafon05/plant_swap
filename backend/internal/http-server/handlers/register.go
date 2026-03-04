@@ -8,13 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Register wires all routes onto r.
 func Register(r *gin.Engine, db storage.Storage, cfg *config.Config) {
 	h := &handler{db: db, cfg: cfg}
 
+	// ── Static files ──────────────────────────────────────────
+	r.Static("/uploads", "./uploads")
+
 	api := r.Group("/api/v1")
 
-	// в функции Register(), до protected группы
+	// ── Health ────────────────────────────────────────────────
 	api.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
@@ -31,6 +33,9 @@ func Register(r *gin.Engine, db storage.Storage, cfg *config.Config) {
 	// Profile
 	p.GET("profile", h.GetProfile)
 	p.PUT("profile", h.UpdateProfile)
+
+	// Upload
+	p.POST("upload", h.UploadFile)
 
 	// Plants
 	p.GET("plants", h.GetPlants)
@@ -62,7 +67,6 @@ func Register(r *gin.Engine, db storage.Storage, cfg *config.Config) {
 	p.GET("reports/stats", h.GetStats)
 }
 
-// handler holds shared dependencies for all handlers.
 type handler struct {
 	db  storage.Storage
 	cfg *config.Config
