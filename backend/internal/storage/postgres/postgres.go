@@ -221,7 +221,7 @@ func (d *DB) GetCompatibleOffers(userID uint) ([]models.TradeOffer, error) {
 		userTypes[string(p.Type)] = true
 	}
 
-	var compatible []models.TradeOffer
+	compatible := make([]models.TradeOffer, 0)
 	for _, o := range all {
 		if o.WantedRegion != "" && strings.Contains(user.Region, o.WantedRegion) {
 			compatible = append(compatible, o)

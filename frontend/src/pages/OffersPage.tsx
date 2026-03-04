@@ -29,28 +29,27 @@ export default function OffersPage() {
   }, [])
 
   async function loadOffers() {
-    setLoading(true)
-    try {
-      let res
-      if (tab === 'compatible') {
-        res = await offersApi.getCompatible()
-        setOffers(res.data)
-      } else if (tab === 'my') {
-        const all = await offersApi.getAll({ status: '' })
-        setOffers(all.data.filter(o => o.owner_id === user?.id))
-      } else {
-        res = await offersApi.getAll({
-          type: typeFilter || undefined,
-          region: regionFilter || undefined,
-        })
-        setOffers(res.data)
-      }
-    } catch {
-      showToast('Ошибка загрузки', 'error')
-    } finally {
-      setLoading(false)
+  setLoading(true)
+  try {
+    if (tab === 'compatible') {
+      const res = await offersApi.getCompatible()
+      setOffers(res.data ?? [])
+    } else if (tab === 'my') {
+      const all = await offersApi.getAll({ status: '' })
+      setOffers((all.data ?? []).filter(o => o.owner_id === user?.id))
+    } else {
+      const res = await offersApi.getAll({
+        type: typeFilter || undefined,
+        region: regionFilter || undefined,
+      })
+      setOffers(res.data ?? [])
     }
+  } catch {
+    showToast('Ошибка загрузки', 'error')
+  } finally {
+    setLoading(false)
   }
+}
 
   useEffect(() => { loadOffers() }, [tab, typeFilter, regionFilter])
 
