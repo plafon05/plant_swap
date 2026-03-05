@@ -1,19 +1,32 @@
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/auth'
+import { offersApi } from '../api/client'
 import { initials } from '../utils/plant'
 
 export default function Navbar() {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
+  const [pendingCount, setPendingCount] = useState(0)
 
-  const navLinks = [
-    { to: '/',          label: '🌿 Каталог' },
-    { to: '/my-plants', label: '🪴 Мои растения' },
-    { to: '/offers',    label: '🔄 Обмены' },
-    { to: '/history',   label: '📜 История' },
-    { to: '/reports',   label: '📊 Отчёты' },
-  ]
+  // Загружаем количество входящих запросов
+  useEffect(() => {
+    if (!user) return
+
+    async function fetchPending() {
+      try {
+        const res = await offersApi.getAll({ status: 'pending' })
+        const count = (res.data ?? []).filter(o => o.owner_id === user!.id).length
+        setPendingCount(count)
+      } catch {}
+    }
+
+    fetchPending()
+    // Проверяем каждые 30 секунд
+    const interval = setInterval(fetchPending, 30_000)
+    return () => clearInterval(interval)
+  }, [user, location.pathname]) // обновляем при смене страницы
 
   function handleLogout() {
     logout()
@@ -26,16 +39,38 @@ export default function Navbar() {
         🌿 Plant<span>Swap</span>
       </NavLink>
 
-      {navLinks.map(({ to, label }) => (
-        <NavLink
-          key={to}
-          to={to}
-          end={to === '/'}
-          className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}
-        >
-          {label}
-        </NavLink>
-      ))}
+      <NavLink to="/" end className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}>
+        🌿 Каталог
+      </NavLink>
+      <NavLink to="/my-plants" className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}>
+        🪴 Мои растения
+      </NavLink>
+
+      {/* Обмены с бейджем */}
+      <NavLink to="/offers" className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}>
+        🔄 Обмены
+        {pendingCount > 0 && (
+          <span style={{
+            background: '#ef5350',
+            color: '#fff',
+            borderRadius: 20,
+            fontSize: 11,
+            fontWeight: 700,
+            padding: '1px 7px',
+            marginLeft: 2,
+            lineHeight: 1.6,
+          }}>
+            {pendingCount}
+          </span>
+        )}
+      </NavLink>
+
+      <NavLink to="/history" className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}>
+        📜 История
+      </NavLink>
+      <NavLink to="/reports" className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}>
+        📊 Отчёты
+      </NavLink>
 
       <div className="nav-spacer" />
 

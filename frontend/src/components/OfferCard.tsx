@@ -77,7 +77,7 @@ export default function OfferCard({ offer, currentUserId, onRequest, onAccept, o
               )}
             </>
           )}
-          {isOwner && offer.status === 'open' && onDelete && (
+          {isOwner && (offer.status === 'open' || offer.status === 'completed') && onDelete && (
             <button className="btn btn-danger btn-sm" onClick={() => onDelete(offer)}>🗑</button>
           )}
         </div>

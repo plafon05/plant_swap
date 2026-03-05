@@ -129,6 +129,12 @@ func (h *handler) DeleteOffer(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "not your offer"})
 		return
 	}
+	// Нельзя удалить пока кто-то ожидает ответа
+	if offer.Status == models.OfferStatusPending {
+		c.JSON(http.StatusConflict, gin.H{"error": "cannot delete offer with pending request — accept or reject it first"})
+		return
+	}
+
 	h.db.DeleteOffer(uint(id))
 	c.JSON(http.StatusOK, gin.H{"message": "offer deleted"})
 }
