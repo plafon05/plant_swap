@@ -2,13 +2,17 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 
 interface Toast { id: number; msg: string; type: 'success' | 'error' }
 
-interface ToastCtx {
+interface ToastContextProps {
   showToast: (msg: string, type?: 'success' | 'error') => void
 }
 
-const ToastContext = createContext<ToastCtx>({ showToast: () => {} })
+const ToastContext = createContext<ToastContextProps>({ showToast: () => {} })
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+interface ToastProviderProps {
+  children: ReactNode;
+}
+
+export const ToastProvider = ({ children }: ToastProviderProps) => { 
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const showToast = useCallback((msg: string, type: 'success' | 'error' = 'success') => {

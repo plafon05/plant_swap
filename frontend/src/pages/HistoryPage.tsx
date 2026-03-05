@@ -11,7 +11,7 @@ export default function HistoryPage() {
 
   useEffect(() => {
     historyApi.getAll()
-      .then(r => setHistory(r.data))
+      .then(resolt => setHistory(resolt.data))
       .catch(() => showToast('Ошибка загрузки', 'error'))
       .finally(() => setLoading(false))
   }, [])
