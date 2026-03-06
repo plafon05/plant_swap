@@ -297,7 +297,6 @@ Authorization: Bearer <token>
 | Метод | Маршрут | Описание | Body | Auth |
 |-------|---------|---------|------|------|
 | `POST` | `/upload` | Загрузить изображение | `file*` (multipart/form-data) | JWT |
-| `GET` | `/uploads/:filename` | Получить файл (статика) | — | — |
 
 Допустимые форматы: JPG, PNG, WEBP, GIF. Максимальный размер: 5MB.
 
