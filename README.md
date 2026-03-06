@@ -52,17 +52,35 @@ plantswap/
 │   │   │   ├── handlers/                  — auth, plants, offers, reports, upload
 │   │   │   └── middleware/                — JWT, logger
 │   │   └── storage/                       — модели и PostgreSQL репозиторий
+│   │       ├── models/
+│   │       ├── postgres/
+│   │       └── storage.go
 │   ├── uploads/                           — загруженные фото
 │   ├── .env                               — секреты (не в Git)
+│   ├── .gitignore
 │   ├── docker-compose-local.yml
 │   └── Makefile
-└── frontend/
-    └── src/
-        ├── api/                           — HTTP клиент (Axios)
-        ├── components/                    — Navbar, PlantCard, ImageUpload, модалки
-        ├── pages/                         — Auth, Plants, Offers, History, Reports, Profile
-        ├── store/                         — Zustand (авторизация)
-        └── types/                         — TypeScript типы
+├── frontend/
+    ├── src/
+    │   ├── api/                           — HTTP клиент (Axios)
+    │   ├── components/                    — Navbar, PlantCard, ImageUpload, модалки
+    │   │   └── models/
+    │   ├── context/
+    │   ├── pages/                         — Auth, Plants, Offers, History, Reports, Profile
+    │   ├── store/                         — Zustand (авторизация)
+    │   ├── types/                         — TypeScript типы
+    │   ├── utils/
+    │   ├── App.tsx/
+    │   ├── index.css/ 
+    │   ├── main.tsx/ 
+    │   ├── vite-env.d.ts/
+    ├── .env
+    ├── index.html
+    ├── package-lock.json
+    ├── package.json
+    ├── tsconfig.json
+    ├── tsconfig.node.json
+    └── vite.config.ts                         
 ```
 
 ---
@@ -152,7 +170,6 @@ make check
 go mod tidy
 make run
 
-# 🌿 PlantSwap starting on :8081 [local]
 ```
 
 Проверка:
@@ -192,14 +209,6 @@ npm run dev
 | Отчёты | `/reports` |
 | Профиль | `/profile` |
 
-## Быстрый старт (ежедневный запуск)
-
-```bash
-# Терминал 1
-cd backend && make db-up && make run
-
-# Терминал 2
-cd frontend && npm run dev
 ```
 
 ## Типичные проблемы
@@ -333,13 +342,6 @@ Authorization: Bearer <token>
 | `PATCH` | `/offers/:id/accept` | Принять запрос | — | JWT |
 | `PATCH` | `/offers/:id/reject` | Отклонить запрос | — | JWT |
 
-**Жизненный цикл предложения:**
-
-```
-open ──→ pending ──→ completed
-  │          └──────→ open (после reject)
-  └──────────────────→ cancelled
-```
 
 Коды ответа: `200/201` успех · `403` не ваш оффер · `409` конфликт статуса · `404` не найдено
 
@@ -383,34 +385,3 @@ open ──→ pending ──→ completed
 | `GET` | `/health` | Проверка работоспособности | — |
 
 ---
-
-## Схема базы данных
-
-```
-users
-├── id, name, email, password_hash
-├── avatar, region, bio
-└── created_at, updated_at
-
-plants
-├── id, user_id → users
-├── name, species, type, description
-├── image_url, region
-├── is_available, trade_count
-└── created_at, updated_at
-
-trade_offers
-├── id, owner_id → users
-├── offered_plant_id → plants
-├── wanted_types, wanted_region, description
-├── status (open | pending | completed | cancelled)
-├── requester_id → users
-├── requested_plant_id → plants
-└── created_at, updated_at
-
-trade_histories
-├── id, trade_offer_id → trade_offers
-├── initiator_id → users, receiver_id → users
-├── plant_given_id → plants, plant_received_id → plants
-└── created_at
-```
