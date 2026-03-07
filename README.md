@@ -1,8 +1,6 @@
 <div align="center">
 
-# 🌿 PlantSwap
-
-**Платформа для обмена комнатными растениями**
+# PlantSwap
 
 ![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)
